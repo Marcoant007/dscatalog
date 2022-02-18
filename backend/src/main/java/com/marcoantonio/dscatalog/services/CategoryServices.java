@@ -34,8 +34,14 @@ public class CategoryServices {
         Category entity = categoryObj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
         //orElseThrow vai rodar a minha excessão que eu criei, igual o throw do Typescript.
         return new CategoryDTO(entity);
-        
     }
 
-
+    @Transactional
+    public CategoryDTO createdCategory(CategoryDTO categoryDTO) {
+        //converter o DTO
+        Category entity = new Category();
+        entity.setName(categoryDTO.getName());
+        entity = respository.save(entity);
+        return new CategoryDTO(entity);
+    }
 }
