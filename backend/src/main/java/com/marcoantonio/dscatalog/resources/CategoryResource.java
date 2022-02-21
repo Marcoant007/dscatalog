@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,21 +27,25 @@ public class CategoryResource {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CategoryDTO> findCategoryById(@PathVariable Long id){
+    public ResponseEntity<CategoryDTO> findById(@PathVariable Long id){
         CategoryDTO categoryDTO = service.findById(id);
         return ResponseEntity.ok().body(categoryDTO);
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createdCategory(@RequestBody CategoryDTO categoryDTO){
+    public ResponseEntity<CategoryDTO> created(@RequestBody CategoryDTO categoryDTO){
         categoryDTO = service.createdCategory(categoryDTO);
         URI uri =  ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/{id}")
         .buildAndExpand(categoryDTO.getId())
         .toUri();
-
         return ResponseEntity.created(uri).body(categoryDTO);
+    }
 
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<CategoryDTO> updated(@PathVariable Long id , @RequestBody CategoryDTO categoryDTO){
+        categoryDTO = service.updatedCategory(id, categoryDTO);
+        return ResponseEntity.ok().body(categoryDTO);
     }
 
 }

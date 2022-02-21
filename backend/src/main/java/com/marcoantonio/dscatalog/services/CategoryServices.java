@@ -5,11 +5,12 @@ import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
 
 import com.marcoantonio.dscatalog.dtos.CategoryDTO;
 import com.marcoantonio.dscatalog.entities.Category;
 import com.marcoantonio.dscatalog.repositories.CategoryRepository;
-import com.marcoantonio.dscatalog.services.exceptions.EntityNotFoundException;
+import com.marcoantonio.dscatalog.services.exceptions.ResourceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class CategoryServices {
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id) {
         Optional<Category> categoryObj = respository.findById(id);
-        Category entity = categoryObj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
+        Category entity = categoryObj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
         //orElseThrow vai rodar a minha excessão que eu criei, igual o throw do Typescript.
         return new CategoryDTO(entity);
     }
@@ -43,5 +44,17 @@ public class CategoryServices {
         entity.setName(categoryDTO.getName());
         entity = respository.save(entity);
         return new CategoryDTO(entity);
+    }
+
+    @Transactional
+    public CategoryDTO updatedCategory( Long id, CategoryDTO categoryDTO) {
+       try {
+        Category entity = respository.getOne(id);
+        entity.setName(categoryDTO.getName());
+        entity = respository.save(entity);
+        return new CategoryDTO(entity);
+       } catch (EntityNotFoundException e ) {
+           throw new ResourceNotFoundException("Id not Found " + id); 
+       }
     }
 }
