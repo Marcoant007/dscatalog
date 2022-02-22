@@ -3,7 +3,6 @@ package com.marcoantonio.dscatalog.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.persistence.EntityNotFoundException;
 
 import com.marcoantonio.dscatalog.dtos.CategoryDTO;
@@ -15,7 +14,6 @@ import com.marcoantonio.dscatalog.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +61,7 @@ public class CategoryServices {
 
     public void delete(Long id) {
         try {
-            
+            respository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException("Id not found " + id);
         }
