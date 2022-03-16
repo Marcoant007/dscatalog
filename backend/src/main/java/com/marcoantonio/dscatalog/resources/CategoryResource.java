@@ -33,10 +33,8 @@ public class CategoryResource {
             @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction,
             @RequestParam(value = "orderBy", defaultValue = "name") String orderBy) {
-        
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-
-        Page <CategoryDTO> list = service.findAllPaged(pageRequest);
+        Page<CategoryDTO> list = service.findAllPaged(pageRequest);
         return ResponseEntity.ok().body(list);
     }
 
@@ -49,9 +47,7 @@ public class CategoryResource {
     @PostMapping
     public ResponseEntity<CategoryDTO> created(@RequestBody CategoryDTO categoryDTO) {
         categoryDTO = service.createdCategory(categoryDTO);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(categoryDTO.getId())
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(categoryDTO.getId())
                 .toUri();
         return ResponseEntity.created(uri).body(categoryDTO);
     }
