@@ -22,6 +22,8 @@ public class ProductDTO implements Serializable {
 
     private List<CategoryDTO> categories = new ArrayList<>();
 
+
+  
     public ProductDTO(){}
 
     public ProductDTO(Long id, String name, String description, Double price, String imgUrl, Instant date) {
@@ -93,5 +95,13 @@ public class ProductDTO implements Serializable {
 
     public void setDate(Instant date) {
         this.date = date;
+    }
+    
+    public List<CategoryDTO> getCategories() {
+        return this.categories;
+    }
+
+    public void setCategories(List<CategoryDTO> categories) {
+        this.categories = categories;
     }
 }
