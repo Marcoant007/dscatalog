@@ -25,21 +25,21 @@ import org.springframework.stereotype.Service;
 public class ProductService {
     
     @Autowired
-    private ProductRepository respository;
+    private ProductRepository repository;
 
     @Autowired
     private CategoryRepository categoryRepository;
     
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAllPaged(PageRequest pageRequest) {
-        Page<Product> list  =  respository.findAll(pageRequest);
+        Page<Product> list  =  repository.findAll(pageRequest);
         Page<ProductDTO> listDTO = list.map(productObject -> new ProductDTO(productObject));
         return listDTO;
     }
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
-        Optional<Product> productObj = respository.findById(id);
+        Optional<Product> productObj = repository.findById(id);
         Product entity = productObj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
         return new ProductDTO(entity, entity.getCategories());
     }
@@ -48,18 +48,16 @@ public class ProductService {
     public ProductDTO createdProduct(ProductDTO productDTO) {
         Product entity = new Product();
         copyDtoToEntity(productDTO, entity);
-        entity = respository.save(entity);
+        entity = repository.save(entity);
         return new ProductDTO(entity);
     }
-
-    
 
     @Transactional
     public ProductDTO updatedProduct( Long id, ProductDTO productDTO) {
        try {
-        Product entity = respository.getOne(id);
+        Product entity = repository.getOne(id);
         copyDtoToEntity(productDTO, entity);
-        entity = respository.save(entity);
+        entity = repository.save(entity);
         return new ProductDTO(entity);
        } catch (EntityNotFoundException e ) {
            throw new ResourceNotFoundException("Id not Found " + id); 
@@ -68,7 +66,7 @@ public class ProductService {
 
     public void delete(Long id) {
         try {
-            respository.deleteById(id);
+            repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException("Id not found " + id);
         }
