@@ -2,6 +2,8 @@ package com.marcoantonio.dscatalog.resources;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import com.marcoantonio.dscatalog.dtos.UserDTO;
 import com.marcoantonio.dscatalog.dtos.UserInsertDTO;
 import com.marcoantonio.dscatalog.services.UserService;
@@ -47,7 +49,7 @@ public class UserResource {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> created(@RequestBody UserInsertDTO userDTO){
+    public ResponseEntity<UserDTO> created(@Valid @RequestBody UserInsertDTO userDTO){
         UserDTO newUserDTO = userService.createdUser(userDTO);
         URI uri =  ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newUserDTO.getId())
         .toUri();
@@ -55,7 +57,7 @@ public class UserResource {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> updated(@PathVariable Long id, @RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> updated(@Valid @PathVariable Long id, @RequestBody UserDTO userDTO){
         userDTO = userService.updatedUser(id, userDTO);
         return ResponseEntity.ok().body(userDTO);
     }

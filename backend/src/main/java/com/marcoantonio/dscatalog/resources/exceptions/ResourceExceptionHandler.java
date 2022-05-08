@@ -9,6 +9,8 @@ import com.marcoantonio.dscatalog.services.exceptions.ResourceNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -39,6 +41,23 @@ public class ResourceExceptionHandler {
         error.setError("Database exception ");
         error.setMessage(exception.getMessage());
         error.setPath(request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException exception, HttpServletRequest request){
+        ValidationError error = new ValidationError();
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        error.setTimestamp(Instant.now());
+        error.setStatus(status.value());
+        error.setError("Validation exception");
+        error.setMessage(exception.getMessage());
+        error.setPath(request.getRequestURI());
+    
+        for(FieldError field :  exception.getBindingResult().getFieldErrors()){
+            error.addError(field.getField(), field.getDefaultMessage());
+        }
+
         return ResponseEntity.status(status).body(error);
     }
 
