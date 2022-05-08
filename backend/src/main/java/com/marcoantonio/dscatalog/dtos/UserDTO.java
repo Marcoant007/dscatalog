@@ -3,11 +3,8 @@ package com.marcoantonio.dscatalog.dtos;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-
 import com.marcoantonio.dscatalog.entities.User;
 
 public class UserDTO implements Serializable{
@@ -82,6 +79,4 @@ public class UserDTO implements Serializable{
     public void setRoles(Set<RoleDTO> roles) {
         this.roles = roles;
     }
-
-
 }
