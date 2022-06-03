@@ -1,6 +1,7 @@
 package com.marcoantonio.dscatalog.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +16,16 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig  extends  AuthorizationServerConfigurerAdapter {
+
+    @Value("${security.oauth2.client.cliente-id}")
+    private String clientId;
+
+    @Value("${security.oauth2.client.cliente-secret}")
+    private String clientSecret;
+
+    @Value("${jwt.duration}")
+    private Integer jwtDuration;
+
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -36,11 +47,11 @@ public class AuthorizationServerConfig  extends  AuthorizationServerConfigurerAd
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-        .withClient("dscatalog") //nome do cliente(backend)
-        .secret(passwordEncoder.encode("dscatalog123")) //senha
+        .withClient(clientId) //nome do cliente(backend)
+        .secret(passwordEncoder.encode(clientSecret)) //senha
         .scopes("read", "write")// acesso de leitura ou escrita  ?
         .authorizedGrantTypes("password")
-        .accessTokenValiditySeconds(86400); //Validade de 24hr para o token
+        .accessTokenValiditySeconds(jwtDuration); //Validade de 24hr para o token
     }
 
     @Override
