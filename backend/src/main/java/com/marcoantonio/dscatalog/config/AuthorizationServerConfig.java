@@ -31,7 +31,6 @@ public class AuthorizationServerConfig  extends  AuthorizationServerConfigurerAd
     @Value("${jwt.duration}")
     private Integer jwtDuration;
 
-
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
