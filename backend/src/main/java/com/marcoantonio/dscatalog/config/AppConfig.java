@@ -1,7 +1,5 @@
 package com.marcoantonio.dscatalog.config;
 
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
