@@ -1,14 +1,19 @@
 package com.marcoantonio.dscatalog.services;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.marcoantonio.dscatalog.dtos.CategoryDTO;
 import com.marcoantonio.dscatalog.dtos.ProductDTO;
+import com.marcoantonio.dscatalog.dtos.UriDTO;
 import com.marcoantonio.dscatalog.entities.Category;
 import com.marcoantonio.dscatalog.entities.Product;
 import com.marcoantonio.dscatalog.repositories.CategoryRepository;
@@ -31,6 +36,9 @@ public class ProductService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private S3Service s3Service;
     
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAllPaged(Long categoryId, String name, PageRequest pageRequest) {
@@ -91,5 +99,10 @@ public class ProductService {
             Category category = categoryRepository.getOne(categoriesDTO.getId());
             entity.getCategories().add(category);
         }
+    }
+
+    public UriDTO uploadFile(@Valid MultipartFile file) {
+        URL urlService = s3Service.uploadFile(file);
+        return new UriDTO(urlService.toString());
     }
 }

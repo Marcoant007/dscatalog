@@ -4,6 +4,8 @@ import java.time.Instant;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.marcoantonio.dscatalog.services.exceptions.DatabaseException;
 import com.marcoantonio.dscatalog.services.exceptions.ResourceNotFoundException;
 
@@ -58,6 +60,41 @@ public class ResourceExceptionHandler {
             error.addError(field.getField(), field.getDefaultMessage());
         }
 
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(AmazonServiceException.class)
+    public ResponseEntity<StandardError> amazonService(AmazonServiceException exception, HttpServletRequest request){
+        StandardError error = new StandardError();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        error.setTimestamp(Instant.now());
+        error.setStatus(status.value());
+        error.setError("Aws Exception");
+        error.setMessage(exception.getMessage());
+        error.setPath(request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(AmazonClientException.class)
+    public ResponseEntity<StandardError> amazonClient(AmazonClientException exception, HttpServletRequest request){
+        StandardError error = new StandardError();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        error.setTimestamp(Instant.now());
+        error.setStatus(status.value());
+        error.setError("Aws Client Exception");
+        error.setMessage(exception.getMessage());
+        error.setPath(request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandardError> ilegalArgument(IllegalArgumentException exception, HttpServletRequest request){
+        StandardError error = new StandardError();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        error.setTimestamp(Instant.now());
+        error.setStatus(status.value());
+        error.setError("Ilegal Argument Exception");
+        error.setMessage(exception.getMessage());
+        error.setPath(request.getRequestURI());
         return ResponseEntity.status(status).body(error);
     }
 
