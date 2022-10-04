@@ -2,10 +2,6 @@ package com.marcoantonio.dscatalog.tests.repository.mocks;
 
 import java.time.Instant;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestComponent;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
 import com.marcoantonio.dscatalog.dtos.ProductDTO;
 import com.marcoantonio.dscatalog.entities.Product;
 

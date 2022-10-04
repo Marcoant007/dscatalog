@@ -1,6 +1,5 @@
 package com.marcoantonio.dscatalog.tests.repository;
 
-import java.time.Instant;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -11,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import com.marcoantonio.dscatalog.entities.Product;
 import com.marcoantonio.dscatalog.repositories.ProductRepository;
@@ -42,7 +40,6 @@ public class ProductRepositoryTests {
     public void findShouldReturnAllProductWhenNameIsEmpty(){
         String searchName = "";
         Page<Product> findName = repository.find(null, searchName,pageable);
-
         Assertions.assertFalse(findName.isEmpty());
         Assertions.assertEquals(countTotalProducts, findName.getTotalElements());
     }
