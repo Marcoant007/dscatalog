@@ -1,24 +1,33 @@
 package com.marcoantonio.dscatalog.tests.services;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.hibernate.jdbc.Expectation;
+import org.hibernate.jdbc.Expectations;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.marcoantonio.dscatalog.dtos.ProductDTO;
+import com.marcoantonio.dscatalog.entities.Product;
 import com.marcoantonio.dscatalog.repositories.ProductRepository;
 import com.marcoantonio.dscatalog.services.ProductService;
 import com.marcoantonio.dscatalog.services.exceptions.DatabaseException;
 import com.marcoantonio.dscatalog.services.exceptions.ResourceNotFoundException;
+import com.marcoantonio.dscatalog.tests.repository.mocks.ProductMock;
 
 @ExtendWith(SpringExtension.class)
 public class ProductServiceTests {
@@ -32,17 +41,44 @@ public class ProductServiceTests {
     private long existingId;
     private Long noneExistingId;
     private Long dependentId;
+    private Product product;
+    private ProductDTO productDTO;
+    private PageImpl<Product> page;
+    private PageImpl <ProductDTO> pageDTO;
 
     @BeforeEach
     void setUp() throws Exception {
         existingId = 1L;
         noneExistingId = 1000L;
         dependentId = 4L;
-        doNothing().when(repository).deleteById(existingId); // quando chamar o deletebyId com id existente, esse método não fará nada.
-        doThrow(EmptyResultDataAccessException.class).when(repository).deleteById(noneExistingId); // quando chamar um delete by id com um id que não existe, espero que o mockito retorne uma throw
-        doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);
+        product = ProductMock.createProduct();
+        productDTO = ProductMock.createProductDTO();
+        page = new PageImpl<>(List.of(product));
+        pageDTO = new PageImpl<>(List.of(productDTO));
+
+        Mockito.when(repository.find(ArgumentMatchers.any(), ArgumentMatchers.anyString(), ArgumentMatchers.any())).thenReturn(page);
+        Mockito.when(repository.save(ArgumentMatchers.any())).thenReturn(product);
+        Mockito.when(repository.findById(noneExistingId)).thenReturn(Optional.empty()); 
+        Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(product)); // QUANDO CHAMAR O FINDBY ID COM ID EXISTENTE O MOCKITO DEVE RETORNAR UM OPTIONAL DO PRODUTO
+       
+        Mockito.doNothing().when(repository).deleteById(existingId); // quando chamar o deletebyId com id existente, esse método não fará nada.
+        
+        Mockito.doThrow(EmptyResultDataAccessException.class).when(repository).deleteById(noneExistingId); // quando chamar um delete by id com um id que não existe, espero que o mockito retorne uma throw
+        Mockito.doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);
+
+        Mockito.when(service.findAllPaged(dependentId, ArgumentMatchers.anyString(), ArgumentMatchers.any())).thenReturn(pageDTO);
+
+        Mockito.when(service.findById(existingId)).thenReturn(productDTO);
+        Mockito.when(service.findById(noneExistingId)).thenThrow(ResourceNotFoundException.class);
+
+        Mockito.when(service.updatedProduct(dependentId, productDTO)).thenReturn(productDTO);
+        Mockito.when(service.updatedProduct(noneExistingId, productDTO)).thenThrow(ResourceNotFoundException.class);
     }
 
+    @AfterEach
+    void after() throws Exception {
+
+    }
     
     @Test
     public void deleteShouldDatabaseExceptionWhenIdDoesNotExists(){
@@ -50,7 +86,7 @@ public class ProductServiceTests {
             service.delete(dependentId);
         });
 
-        verify(repository, Mockito.times(1)).deleteById(dependentId);
+        Mockito.verify(repository, Mockito.times(1)).deleteById(dependentId);
     }
 
     @Test
@@ -59,7 +95,7 @@ public class ProductServiceTests {
             service.delete(noneExistingId);
         });
 
-        verify(repository, Mockito.times(1)).deleteById(noneExistingId);
+        Mockito.verify(repository, Mockito.times(1)).deleteById(noneExistingId);
     }
 
     @Test
@@ -68,7 +104,7 @@ public class ProductServiceTests {
             service.delete(existingId);
         });
 
-        verify(repository, Mockito.times(1)).deleteById(existingId);
+        Mockito.verify(repository, Mockito.times(1)).deleteById(existingId);
     }
 
 }
