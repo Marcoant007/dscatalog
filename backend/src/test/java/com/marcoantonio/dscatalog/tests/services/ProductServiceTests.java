@@ -1,13 +1,9 @@
 package com.marcoantonio.dscatalog.tests.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.jdbc.Expectation;
-import org.hibernate.jdbc.Expectations;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,22 +62,17 @@ public class ProductServiceTests {
         Mockito.doThrow(EmptyResultDataAccessException.class).when(repository).deleteById(noneExistingId); // quando chamar um delete by id com um id que não existe, espero que o mockito retorne uma throw
         Mockito.doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);
 
-        Mockito.when(service.findAllPaged(dependentId, ArgumentMatchers.anyString(), ArgumentMatchers.any())).thenReturn(pageDTO);
+        // Mockito.when(service.findAllPaged(dependentId, ArgumentMatchers.anyString(), ArgumentMatchers.any())).thenReturn(pageDTO);
 
-        Mockito.when(service.findById(existingId)).thenReturn(productDTO);
-        Mockito.when(service.findById(noneExistingId)).thenThrow(ResourceNotFoundException.class);
+        // Mockito.when(service.findById(existingId)).thenReturn(productDTO);
+        // Mockito.when(service.findById(noneExistingId)).thenThrow(ResourceNotFoundException.class);
 
-        Mockito.when(service.updatedProduct(dependentId, productDTO)).thenReturn(productDTO);
-        Mockito.when(service.updatedProduct(noneExistingId, productDTO)).thenThrow(ResourceNotFoundException.class);
-    }
-
-    @AfterEach
-    void after() throws Exception {
-
+        // Mockito.when(service.updatedProduct(dependentId, productDTO)).thenReturn(productDTO);
+        // Mockito.when(service.updatedProduct(noneExistingId, productDTO)).thenThrow(ResourceNotFoundException.class);
     }
     
     @Test
-    public void deleteShouldDatabaseExceptionWhenIdDoesNotExists(){
+    public void deleteShouldThrowDatabaseExceptionWhenDepedentId(){
         Assertions.assertThrows(DatabaseException.class, () -> { 
             service.delete(dependentId);
         });
