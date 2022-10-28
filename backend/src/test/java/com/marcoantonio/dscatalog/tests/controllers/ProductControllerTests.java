@@ -60,6 +60,7 @@ public class ProductControllerTests {
     private long noneExistingid;
     private ProductDTO newProductDTO;
     private ProductDTO existingProductDTO;
+    private PageImpl<ProductDTO> page;
 
     @BeforeEach
     public void setUp() throws Exception{
@@ -68,20 +69,33 @@ public class ProductControllerTests {
         newProductDTO = ProductMock.createProductDTO(null);
         existingProductDTO = ProductMock.createProductDTO(existingId);
         
+        page = new PageImpl<>(List.of(existingProductDTO));
+
         when(productService.findById(existingId)).thenReturn(existingProductDTO);
         when(productService.findById(noneExistingid)).thenThrow(ResourceNotFoundException.class);
+        when(productService.findAllPaged( any(), anyString(), any())).thenReturn(page);
     }
 
     @Test
     public void findByIdShouldReturnProductWhenIdExists() throws Exception{
        ResultActions result = mockMvc.perform(get("/products/{id}", existingId).accept(MediaType.APPLICATION_JSON));
        result.andExpect(status().isOk());
+       result.andExpect(jsonPath("$.id").exists());
+       result.andExpect(jsonPath("$.id").value(existingId));
     }
     
     @Test
     public void findByIdShouldReturnProductWhenDoesNotExists() throws Exception{
         ResultActions result = mockMvc.perform(get("/products/{id}", noneExistingid).accept(MediaType.APPLICATION_JSON));
-       result.andExpect(status().isNotFound());
+        result.andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    public void findAllShouldReturnPage() throws Exception{
+        ResultActions result = mockMvc.perform(get("/products", noneExistingid).accept(MediaType.APPLICATION_JSON));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.content").exists());
     }
     
 	private String obtainAccessToken(String username, String password) throws Exception {
