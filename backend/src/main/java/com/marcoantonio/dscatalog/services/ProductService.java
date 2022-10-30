@@ -64,7 +64,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductDTO updatedProduct( Long id, ProductDTO productDTO) {
+    public ProductDTO updatedProduct(Long id, ProductDTO productDTO) {
        try {
         Product entity = repository.getOne(id);
         copyDtoToEntity(productDTO, entity);
