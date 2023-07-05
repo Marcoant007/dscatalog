@@ -1,0 +1,17 @@
+services:
+  postgres-database:
+    image: postgres
+    container_name: bd_dscatalog
+    restart: always
+    ports:
+      - 5433:5433
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_DB=bd_dscatalog
+    volumes:
+      - pgdata:/data/postgres
+
+
+volumes:
+  pgdata:

@@ -52,10 +52,10 @@ public class ProductControllerTests {
     @MockBean
     private ProductService productService;
 
-	@Value("${security.oauth2.client.cliente-id}")
+	@Value("${security.oauth2.client.client-id}")
 	private String clientId;
 	
-	@Value("${security.oauth2.client.cliente-secret}")
+	@Value("${security.oauth2.client.client-secret}")
 	private String clientSecret;
 
     private Long existingId;
